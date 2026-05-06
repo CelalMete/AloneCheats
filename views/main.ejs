@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+   <link rel="stylesheet" href="/css/content.css">
+   <link rel="stylesheet" href="/css/<%= style %>">
+   <link rel="stylesheet" href="/css/layout.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style type="text/css">@font-face {font-family:Inter;font-style:normal;font-weight:100 900;src:url(/cf-fonts/v/inter/5.0.16/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:Inter;font-style:normal;font-weight:100 900;src:url(/cf-fonts/v/inter/5.0.16/latin-ext/wght/normal.woff2);unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:Inter;font-style:normal;font-weight:100 900;src:url(/cf-fonts/v/inter/5.0.16/greek/wght/normal.woff2);unicode-range:U+0370-03FF;font-display:swap;}@font-face {font-family:Inter;font-style:normal;font-weight:100 900;src:url(/cf-fonts/v/inter/5.0.16/cyrillic/wght/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:Inter;font-style:normal;font-weight:100 900;src:url(/cf-fonts/v/inter/5.0.16/vietnamese/wght/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}@font-face {font-family:Inter;font-style:normal;font-weight:100 900;src:url(/cf-fonts/v/inter/5.0.16/cyrillic-ext/wght/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:Inter;font-style:normal;font-weight:100 900;src:url(/cf-fonts/v/inter/5.0.16/greek-ext/wght/normal.woff2);unicode-range:U+1F00-1FFF;font-display:swap;}</style>
+</head>
+<body>
+   <div class="navbarCont">
+      <div class="gradient-bg"></div>
+      <div class="black spacebetween">
+         <div class="navLeft ">
+            <div class="logo"></div>
+            <div class="navName">ALONE</div>
+            <div class="online">
+               <div class="greenbg round"></div>
+               <div class="greentxt numNav">26</div>
+               <div class="textNav">ONLINE</div>
+            </div>
+         </div>
+         <div class="navRight">
+            <div class="cart "><i class="fa-solid fa-cart-shopping text-sm" style="height: 1em; color: rgb(214, 205, 205);"></i></div>
+            <div class="discord">
+               <div class="icon"><i class="fa-brands fa-discord" style="color: rgb(255, 255, 255);"></i></div>
+               <div >DISCORD</div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="secondNav">
+      <div class="navLeft">
+         <div class="header_nav2 active">
+               <div class="icon"><i class="fa-solid fa-store blue"></i></div>
+               <div class="text-sm">STORE</div></div>
+         <div class="header_nav2"> 
+               <div class="icon"><i class="fa-solid fa-signal"></i></div>
+               <div class="text-sm">STATUS</div></div>
+         <div class="header_nav2"> 
+               <div class="icon"><i class="fa-solid fa-star" ></i></div>
+               <div class="text-sm">REVIEWS</div></div>
+         <div class="header_nav2"> 
+               <div class="icon"><i class="fa-brands fa-discord"></i></div>
+               <div class="text-sm">DISCORD</div></div>
+      </div>
+      <div class="navRight2">
+         <div class="searchCont lightBorder">
+            <div class="magnify"><i class="fa-solid fa-magnifying-glass "style="color: rgb(227, 222, 222);"></i></div>
+            <input type="text" name="search" id="searchBar" placeholder="Search...">
+         </div>
+      </div>
+   </div>
+   <div class="bigText">
+      <div class="bigText2">Your Source <br>
+for <span class="mavitxt">Undetected Cheats.</span> </div>
+   </div>
+      <div class="content"><%- include(content) %></div>
+   <div class="box Categories bottom">
+      <h2>Why We <span>Alone</span>?</h2>
+      <p class="bottom2">At Alone, we lead the industry in providing high-quality, undetected game cheats. With over 10,000 orders, we offer instant delivery and 24/7 - 365 days a year dedicated support. Enhance your gaming experience with expertly crafted cheats and enjoy unparalleled performance.</p>
+   <div class="products-grid gap6">
+      <div class="box Categories2">
+         <div class="bluebox">
+         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="width: 24px; height: 24px;" fill="currentColor">
+            <path d="M64 224c0-88.4 71.6-160 160-160s160 71.6 160 160l0 37.5c-10-3.5-20.8-5.5-32-5.5l-16 0c-26.5 0-48 21.5-48 48l0 128c0 26.5 21.5 48 48 48l16 0c53 0 96-43 96-96l0-160C448 100.3 347.7 0 224 0S0 100.3 0 224L0 384c0 53 43 96 96 96l16 0c26.5 0 48-21.5 48-48l0-128c0-26.5-21.5-48-48-48l-16 0c-11.2 0-22 1.9-32 5.5L64 224z"/>
+         </svg></div>
+         <h3>24/7 - 365 Support</h3>
+         <p class="pmini">Our dedicated support team is available 24/7, 365 days a year.</p>
+      </div>
+      <div class="box Categories2">
+         <div class="bluebox">
+         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="width: 24px; height: 24px;" fill="currentColor">
+            <path d="M160 80c0-35.3 28.7-64 64-64s64 28.7 64 64l0 48-128 0 0-48zm-48 48l-64 0c-26.5 0-48 21.5-48 48L0 384c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-208c0-26.5-21.5-48-48-48l-64 0 0-48c0-61.9-50.1-112-112-112S112 18.1 112 80l0 48zm24 48a24 24 0 1 1 0 48 24 24 0 1 1 0-48zm152 24a24 24 0 1 1 48 0 24 24 0 1 1 -48 0z"/>
+         </svg></div>
+         <h3>Instant Delivery</h3>
+         <p class="pmini">No need to wait for delivery, products are delivered instantly after purchase.</p>
+      </div>
+      <div class="box Categories2">
+         <div class="bluebox">
+         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="width: 24px; height: 24px;" fill="currentColor">
+            <path d="M256 0c4.6 0 9.2 1 13.4 2.9L457.8 82.8c22 9.3 38.4 31 38.3 57.2-.5 99.2-41.3 280.7-213.6 363.2-16.7 8-36.1 8-52.8 0-172.4-82.5-213.1-264-213.6-363.2-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.9 1 251.4 0 256 0zm0 66.8l0 378.1c138-66.8 175.1-214.8 176-303.4l-176-74.6 0 0z"/>
+         </svg></div>
+         <h3>Secure transactions</h3>
+         <p class="pmini">Ensure your transactions are safe and hassle-free with our robust payment system.</p>
+      </div>
+   </div>
+   </div>
+</body>
+</html>

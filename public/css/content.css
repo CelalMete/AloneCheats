@@ -1,0 +1,17 @@
+:root {
+  --theme-primary: 59 130 246; 
+  --theme-secondary: 30 41 59;
+  --theme-bg: 18 18 18;
+  --theme-radius: 12px;
+  --tw-text-opacity: 1;
+  --radius: .5rem;
+  --h-full:100%;
+  --tw-shadow: inset 0 1px 0 #ffffff0a;/*fuck these shits */
+   --tw-shadow-colored: inset 0 1px 0 var(--tw-shadow-color);/*not working*/
+   --tw-ring-offset-shadow: 0 0 #0000;
+    --tw-ring-shadow: 0 0 #0000;
+}
+.spacebetween{display: flex;flex-direction: row;justify-content:space-between;}
+.box{ border: 1px solid rgb(45 45 50);border-radius: .5rem;box-sizing: border-box;width: 100%;color: rgb(255,255,255,1);
+   margin-bottom: 1.5rem;background-color: rgb(24 25 30);text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+   box-shadow:  0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05),inset 0 1px 0 rgba(255, 255, 255, 0.03);}
