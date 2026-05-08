@@ -18,6 +18,18 @@ app.get('/',async(req,res)=>{
       style:'store.css'
    })
 })
+app.get('/game',async(req,res)=>{
+   res.render('main',{
+      content:'game',
+      style:'store.css'
+   })
+})
+app.get('/cheats',async(req,res)=>{
+   res.render('main',{
+      content:'cheat',
+      style:'store.css'
+   })
+})
 const PORT = 2000;
 app.listen(PORT, () => {
     console.log(`Nodemon aktif: http://localhost:${PORT}/ adresine git.`);

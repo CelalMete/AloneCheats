@@ -1,0 +1,4 @@
+.itemBottom{display: flex;flex-direction: row;gap: 1rem;height: 3rem;}
+.price div{ color: #A3A3A3;font-size: 14px; margin-bottom: .5rem;}
+
+.gren{ color: rgb(30, 215, 96);font-weight: 600;font-size: 16px;}
