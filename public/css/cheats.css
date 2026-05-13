@@ -1,2 +1,19 @@
-.contNumb{display: flex;flex-direction: row;}
-#price{font-size: 24px;}
+.contNumb{display: grid; grid-template-columns: 1fr 1fr 1fr; border-radius: .5rem;overflow: hidden;
+width: 120px;height: 40px; text-align: center;}
+.contNumb span{background-color: rgb(45, 106, 141);font-size: 20px;
+    align-items: center; display: flex;justify-content: center;}
+.contNumb div{display: flex;justify-content: center; align-items: center;font-size: 18px;}
+#price{font-size: 30px;font-weight: 700;}
+.fontright{text-align: right;}
+h3{font-size: 15px;}
+.half{width: 60%;display: flex;align-items: center; flex-direction: column;}
+.photo{width: 90%;border-radius: 2rem;margin-top: 1rem;margin-bottom: 1rem;}
+.miniCont{width: 90%; display: flex;}
+.miniPhoto{width: 6rem;height: 3.5rem;margin-left: .5rem;border-radius: .75rem;}
+.slider-container {
+  position: relative;
+  width: 800px; height: 450px;
+  border: 2px solid #2d6a8d; /* Daha önce konuştuğumuz mavi tonu */
+  overflow: hidden;
+}
+
