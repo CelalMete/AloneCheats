@@ -10,10 +10,46 @@ h3{font-size: 15px;}
 .photo{width: 90%;border-radius: 2rem;margin-top: 1rem;margin-bottom: 1rem;}
 .miniCont{width: 90%; display: flex;}
 .miniPhoto{width: 6rem;height: 3.5rem;margin-left: .5rem;border-radius: .75rem;}
-.slider-container {
+.comparison-slider {
   position: relative;
-  width: 800px; height: 450px;
-  border: 2px solid #2d6a8d; /* Daha önce konuştuğumuz mavi tonu */
+  width: 100%;
+  height: 500px; /* Slider yüksekliği */
   overflow: hidden;
+}
+
+.img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.foreground-img {
+  width: 50%;
+  border-right: 3px solid white;
+  z-index: 2;
+}
+
+/* Sürükleme Çubuğu */
+.slider-input {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: transparent;
+  appearance: none;
+  z-index: 10;
+  cursor: col-resize;
+}
+
+.slider-handle {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px; height: 40px;
+  background: white;
+  border-radius: 50%;
+  z-index: 11;
+  pointer-events: none;
 }
 
