@@ -1,9 +1,23 @@
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-  <link rel="stylesheet" href="/css/cheats.css">
-   <div class="box gap1">
-     <div class="half">
- 
-</div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<link rel="stylesheet" href="/css/cheats.css">
+ <div class="box gap1">
+  <div class="half">
+   <div class="half">
+    <div class="main-display">
+        <div class="comparison-slider" id="main-frame">
+            <div class="img background-img" style="background-image: url('https://user-generated-content.komerza.com/e9bfa2b4-9311-4a44-829c-4dd720e50a65.PNG');"></div>
+            <div class="img foreground-img" id="fg-img" style="background-image: url('https://user-generated-content.komerza.com/e9bfa2b4-9311-4a44-829c-4dd720e50a65.PNG');"></div>
+            <input type="range" min="0" max="100" value="50" class="compare-input" id="compare-range">
+            <div class="slider-line" id="line"></div>
+        </div>
+    </div>
+    <div class="thumb-gallery">
+        <img src="https://user-generated-content.komerza.com/e9bfa2b4-9311-4a44-829c-4dd720e50a65.PNG" class="thumb active" onclick="changeImage(this.src, true)">
+        <img src="https://user-generated-content.komerza.com/957578bc-4399-46dd-b985-625ed676acad.PNG" class="thumb" onclick="changeImage(this.src, false)">
+        <img src="https://user-generated-content.komerza.com/26820da7-c583-4df6-8ae9-1389525c1689.png" class="thumb" onclick="changeImage(this.src, false)">
+    </div>
+</div>   
+  </div>
       <div class="infos">
          <h1>Fortnite Pro</h1>
          <span class="undetected green">
@@ -31,30 +45,30 @@
       </div>
       
    </div>
-<script type="module">
-  import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs';
+<script>
+    const range = document.getElementById('compare-range');
+    const fg = document.getElementById('fg-img');
+    const line = document.getElementById('line');
 
-  const swiperThumbs = new Swiper(".mySwiper2", {
-    spaceBetween: 10,
-    slidesPerView: 4,
-    freeMode: true,
-    watchSlidesProgress: true,
-  });
-  const swiperMain = new Swiper(".mySwiper", {
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true, 
-    },
-    thumbs: {
-      swiper: swiperThumbs,
-    },
-    observer: true,
-    observeParents: true,
-  });
-  console.log("Sliderlar bağlandı.");
+    range.addEventListener('input', (e) => {
+        const val = e.target.value + "%";
+        fg.style.width = val;
+        line.style.left = val;
+    });
+
+    function changeImage(newSrc, isComparison) {
+        const mainFrame = document.getElementById('main-frame');
+        const fgImg = document.getElementById('fg-img');
+        const bgImg = document.querySelector('.background-img');
+        if (isComparison) {
+            mainFrame.classList.add('active');
+        } else {
+            bgImg.style.backgroundImage = `url('${newSrc}')`;
+            fg.style.width = "0%"; 
+            line.style.display = "none";
+        }
+        document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+    }
 </script>
 <script>console.log("calisti")</script>
