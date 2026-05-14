@@ -58,12 +58,34 @@ h3{font-size: 15px;}
 
 .slider-handle {
   position: absolute;
-  top: 50%; left: 50%;
+  top: 50%; left: 50%; /* Tam ortaya sabitler */
   transform: translate(-50%, -50%);
   width: 40px; height: 40px;
   background: white;
-  border-radius: 50%;
+  border-radius: 50%; /* Yuvarlak yapar */
   z-index: 11;
   pointer-events: none;
 }
+.mySwiper2 {
+    height: 80px; /* Küçük resimlerin yüksekliği */
+    box-sizing: border-box;
+    padding: 10px 0;
+}
 
+.mySwiper2 .swiper-slide {
+    width: 25%;
+    height: 100%;
+    opacity: 0.4; /* Seçili olmayanlar şeffaf olsun */
+    cursor: pointer;
+}
+
+.mySwiper2 .swiper-slide-thumb-active {
+    opacity: 1; /* Seçili olan tam görünsün */
+    border: 2px solid #fff; /* Seçili olanın etrafına çerçeve */
+}
+
+.mySwiper2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

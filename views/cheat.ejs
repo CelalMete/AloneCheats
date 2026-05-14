@@ -2,37 +2,7 @@
   <link rel="stylesheet" href="/css/cheats.css">
    <div class="box gap1">
      <div class="half">
-  <div class="swiper mySwiper">
-    <div class="swiper-wrapper">
-      
-      <div class="swiper-slide">
-        <div class="comparison-slider">
-          <div class="img background-img" style="background-image: url('https://user-generated-content.komerza.com/e9bfa2b4-9311-4a44-829c-4dd720e50a65.PNG');"></div>
-          
-          <div class="img foreground-img" style="background-image: url('https://user-generated-content.komerza.com/e9bfa2b4-9311-4a44-829c-4dd720e50a65.PNG');"></div>
-          
-          <div class="slider-handle"></div>
-        </div>
-      </div>
-      
-      <div class="swiper-slide">
-        <img src="https://user-generated-content.komerza.com/e9bfa2b4-9311-4a44-829c-4dd720e50a65.PNG" alt="Araç Görseli" style="width: 100%; height: 100%; object-fit: cover;" />
-      </div>
-
-    </div>
-    
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-pagination"></div>
-
-  </div>
-   <div class="swiper mySwiper">
-  <div class="swiper-wrapper">
-    <div class="swiper-slide"><img src="https://user-generated-content.komerza.com/e9bfa2b4-9311-4a44-829c-4dd720e50a65.PNG" /></div>
-    <div class="swiper-slide"><img src="https://user-generated-content.komerza.com/e9bfa2b4-9311-4a44-829c-4dd720e50a65.PNG" /></div>
-    <div class="swiper-slide"><img src="https://user-generated-content.komerza.com/e9bfa2b4-9311-4a44-829c-4dd720e50a65.PNG" /></div>
-  </div>
-   </div>
+ 
 </div>
       <div class="infos">
          <h1>Fortnite Pro</h1>
@@ -64,18 +34,27 @@
 <script type="module">
   import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs';
 
-  const swiper = new Swiper('.mySwiper', {
+  const swiperThumbs = new Swiper(".mySwiper2", {
+    spaceBetween: 10,
+    slidesPerView: 4,
+    freeMode: true,
+    watchSlidesProgress: true,
+  });
+  const swiperMain = new Swiper(".mySwiper", {
     navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
     },
     pagination: {
-        el: '.swiper-pagination',
-        clickable: true, 
+      el: '.swiper-pagination',
+      clickable: true, 
+    },
+    thumbs: {
+      swiper: swiperThumbs,
     },
     observer: true,
     observeParents: true,
-});
-  console.log("calisti2")
+  });
+  console.log("Sliderlar bağlandı.");
 </script>
 <script>console.log("calisti")</script>

@@ -12,7 +12,7 @@ const swiper = new Swiper(".mySwiper", {
     el: ".swiper-pagination",
     clickable: true,
   },
-  // Karşılaştırma slider'ı çekilirken ana slider kaymasın diye:
+ 
   touchStartPreventDefault: false 
 });
 
