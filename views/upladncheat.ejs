@@ -1,0 +1,19 @@
+<h3>Hile Yükle</h3>
+<form action="/add-cheat2" method="POST" enctype="multipart/form-data">
+    <label>Kategori Seç:</label>
+    <select name="categoryId" required>
+        <% games.forEach(game => { %>
+            <option value="<%= game._id %>"><%= game.GameName %></option>
+        <% }) %>
+    </select>
+
+    <input type="text" name="name" placeholder="Hile Adı" required>
+    <input type="text" name="price" placeholder="Fiyat (örn: 7.99)" required>
+    
+    <label>Kapak Resmi:</label>
+    <input type="file" name="coverImage" required>
+    <label>Alt Resimler (Max 5):</label>
+    <input type="file" name="otherImages" multiple>
+    
+    <button type="submit">Hileyi Kaydet</button>
+</form>
