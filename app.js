@@ -58,18 +58,13 @@ async function verifyPayment(txid, method, expectedAmount) {
             if (!tx.trc20TransferInfo) {
                  return { success: false, message: "Bu işlemde USDT transferi bulunamadı." };
             }
-
-            // Bize gelen ve simgesi USDT olan transferi yakala
             const transfer = tx.trc20TransferInfo.find(t => t.to_address === myAddress && t.symbol === 'USDT');
             if (!transfer) {
                 return { success: false, message: "Ödeme alıcısı eşleşmedi veya gönderilen coin USDT değil." };
             }
-
-            // USDT'nin virgülden sonra 6 sıfırı vardır
             receivedAmount = Number(transfer.amount_str) / 1000000;
 
         } 
-        // --- 2. YOL: LTC, BTC, XMR (BLOCKCHAIR API) KONTROLÜ ---
         else {
             const networkMap = { ltc: 'litecoin', btc: 'bitcoin', xmr: 'monero' };
             const network = networkMap[method];
@@ -90,11 +85,7 @@ async function verifyPayment(txid, method, expectedAmount) {
             const decimalsMap = { ltc: 100000000, btc: 100000000, xmr: 1000000000000 };
             receivedAmount = Number(recipientData.value) / decimalsMap[method];
         }
-
-        // --- ORTAK TUTAR DOĞRULAMA (TÜM COINLER İÇİN GEÇERLİ) ---
         const expected = Number(expectedAmount);
-
-        // Arka planda ne hesaplandığını terminalde gör
         console.log(`DEBUG -> Yöntem: ${method.toUpperCase()}, Beklenen: ${expected.toFixed(5)}, Gelen: ${receivedAmount.toFixed(5)}`);
 
         if (isNaN(expected) || isNaN(receivedAmount) || expected <= 0) {

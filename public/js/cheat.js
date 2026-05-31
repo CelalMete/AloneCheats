@@ -1,51 +1,77 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const plus = document.getElementById('plus');
-    const minus = document.getElementById('minus');
-    const input = document.getElementById('numb');
-    const prices = document.querySelectorAll('.variant-box');
-    const totalprice = document.getElementById('price');
-    const thumbs = document.querySelectorAll('.thumb');
+document.addEventListener('DOMContentLoaded', () => {
+    const variantBoxes = document.querySelectorAll('.variant-box');
+    const priceDisplay = document.getElementById('price');
+    const numbInput = document.getElementById('numb');
+    const minusBtn = document.getElementById('minus');
+    const plusBtn = document.getElementById('plus');
+    const addCartBtn = document.getElementById('addcart');
     const buyBtn = document.getElementById('buy');
-    input.value = 1;
-    let currentVariant = prices[0];
-    currentVariant.classList.add('active'); // Nokta yok!
-    const updatePrice = () => {
-        let price = parseFloat(currentVariant.getAttribute('data-price'));
-        let qty = parseInt(input.value) || 1;
-        totalprice.innerText = (price * qty).toFixed(2) + "$";
-    };
-    updatePrice();
-    plus.addEventListener('click', () => {
-        input.value = parseInt(input.value) + 1;
-        updatePrice();
-    });
-    minus.addEventListener('click', () => {
-        if (input.value > 1) { // 1'den aşağı düşmesin
-            input.value = parseInt(input.value) - 1;
-            updatePrice();
+    const cheatId = document.getElementById('buy').getAttribute('data-cheat-id');
+    const cheatName = document.querySelector('h1').innerText;
+    let selectedVariant = null;
+    let basePrice = 0;
+    let maxStock = 0;
+    variantBoxes.forEach(box => {
+        if (box.querySelector('.stock.out')) {
+            box.classList.add('out-of-stock');
         }
     });
-    prices.forEach(pr => {
-        pr.addEventListener('click', () => {
-            prices.forEach(p => p.classList.remove('active')); // Nokta yok!
-            pr.classList.add('active'); // Nokta yok!
-            currentVariant = pr;
-            updatePrice();
-        });
+
+    function updateTotal() {
+        let qty = parseInt(numbInput.value) || 1;
+        if (qty < 1) qty = 1;
+        if (qty > maxStock) qty = maxStock; 
+        
+        numbInput.value = qty;
+        priceDisplay.innerText = '$' + (basePrice * qty).toFixed(2);
+    }
+    variantBoxes.forEach(box => {
+        if (!box.classList.contains('out-of-stock')) {
+            box.addEventListener('click', () => {
+                variantBoxes.forEach(b => b.classList.remove('active'));
+                box.classList.add('active');
+                basePrice = parseFloat(box.getAttribute('data-price'));
+                selectedVariant = box.querySelector('.title').innerText;
+                const stockText = box.querySelector('.stock').innerText;
+                const stockMatch = stockText.match(/\((\d+)\)/); 
+                maxStock = stockMatch ? parseInt(stockMatch[1]) : 0;
+                numbInput.value = 1;
+                updateTotal();
+            });
+        }
     });
-    thumbs.forEach(thumb => {
-        thumb.addEventListener('click', (e) => {
-            const newSrc = e.target.src;
-            const mainFrame = document.getElementById('main-frame');
-            const fgImg = document.getElementById('fg-img');
-            
-            fgImg.style.backgroundImage = `url('${newSrc}')`;
-            
-            thumbs.forEach(t => t.classList.remove('active'));
-            e.target.classList.add('active');
-        });
+    const firstInStock = document.querySelector('.variant-box:not(.out-of-stock)');
+    if (firstInStock) firstInStock.click();
+    minusBtn.addEventListener('click', () => {
+        numbInput.value = parseInt(numbInput.value) - 1;
+        updateTotal();
     });
-   buyBtn.addEventListener('click', (e) => {
+
+    plusBtn.addEventListener('click', () => {
+        numbInput.value = parseInt(numbInput.value) + 1;
+        updateTotal();
+    });
+
+    numbInput.addEventListener('input', updateTotal);
+    addCartBtn.addEventListener('click', () => {
+        if (!selectedVariant) return alert("Please select a variant!");
+
+        const qty = parseInt(numbInput.value);
+
+        const cartItem = {
+            id: cheatId,
+            name: cheatName,
+            variant: selectedVariant,
+            price: basePrice,
+            qty: qty,
+            maxStock: maxStock
+        };
+
+        if (window.addToCart) {
+            window.addToCart(cartItem);
+        }
+    });
+     buyBtn.addEventListener('click', (e) => {
     const cheatCard = e.target.closest('.cheat-card');
    const cheatId = cheatCard.getAttribute('data-cheat-id');
     const price = currentVariant.getAttribute('data-price');

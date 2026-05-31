@@ -63,7 +63,7 @@ h3 { font-size: 15px; }
 }
 
 .variant-box { 
-    flex: 1 1 calc(25% - 12px); 
+    flex: 1 1 calc(20% - 10px); 
     min-width: 160px; 
     background-color: #111827; 
     border: 1px solid #1f2937; 
@@ -114,3 +114,12 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none; 
   margin: 0; 
 }
+@media (max-width: 1024px){
+.grid{grid-template-columns: repeat(1, minmax(0, 1fr));}
+ .bttm{grid-template-columns: 1fr 1fr;}
+}
+@media (max-width: 640px) {
+    .bttm{grid-template-columns: 1fr;}
+    .thumb-gallery{display: none;}
+}
+

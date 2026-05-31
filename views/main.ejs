@@ -24,7 +24,7 @@
             </div>
          </div>
          <div class="navRight">
-            <div class="cart "><i class="fa-solid fa-cart-shopping text-sm" style="height: 1em; color: rgb(214, 205, 205);"></i></div>
+            <div class="cart " id="cart"><i class="fa-solid fa-cart-shopping text-sm" style="height: 1em; color: rgb(214, 205, 205);"></i></div>
             <div class="discord">
                <div class="icon"><i class="fa-brands fa-discord" style="color: rgb(255, 255, 255);"></i></div>
                <div >DISCORD</div>
@@ -34,37 +34,62 @@
    </div>
    <div class="secondNav">
       <div class="navLeft">
+         
          <a href="/">
             <div class="header_nav2 active">
                <div class="icon"><i class="fa-solid fa-store blue"></i></div>
                <div class="text-sm">STORE</div>
             </div>
-            </a>
-         <div class="header_nav2"> 
+         </a>
+         
+         <a href="/uploadcheat">
+            <div class="header_nav2"> 
                <div class="icon"><i class="fa-solid fa-signal"></i></div>
-               <a href="/uploadcheat" class="text-sm">STATUS</div></a>
-         <div class="header_nav2"> 
-               <div class="icon"><i class="fa-solid fa-star" ></i></div>
-               <div class="text-sm">REVIEWS</div></div>
-         <div class="header_nav2"> 
-               <div class="icon"><i class="fa-brands fa-discord"></i></div>
-               <div class="text-sm">DISCORD</div></div>
-      </div>
-      <div class="navRight2">
-         <div class="searchCont lightBorder">
-            <div class="magnify"><i class="fa-solid fa-magnifying-glass "style="color: rgb(227, 222, 222);"></i></div>
-            <input type="text" name="search" id="searchBar" placeholder="Search...">
-            <div id="searchOut">
-               <h4 class="searchHead">Supported Cheats</h4>
-               <div id="sonuclar"></div>
+               <div class="text-sm">STATUS</div>
             </div>
+         </a>
+         <a href="/uploadcheat">
+         <div class="header_nav2"> 
+            <div class="icon"><i class="fa-solid fa-star"></i></div>
+            <div class="text-sm">REVIEWS</div>
          </div>
+         </a>
+         <a href="/uploadcheat">
+         <div class="header_nav2"> 
+            <div class="icon"><i class="fa-brands fa-discord"></i></div>
+            <div class="text-sm">DISCORD</div>
+         </div>
+         </a>
          
       </div>
+
+     <div class="navRight2">
+    <div class="mobile-search-trigger" id="openSearchBtn">
+        <i class="fa-solid fa-magnifying-glass" style="color: rgb(227, 222, 222);"></i>
+    </div>
+
+    <div class="search-wrapper" id="searchWrapper">
+        <div class="search-backdrop" id="searchBackdrop"></div> <div class="searchCont lightBorder">
+            <div class="search-top">
+                <div class="magnify"><i class="fa-solid fa-magnifying-glass" style="color: rgb(227, 222, 222);"></i></div>
+                <input type="text" name="search" id="searchBar" placeholder="Search products...">
+                <i class="fa-solid fa-xmark close-search" id="closeSearchBtn"></i>
+            </div>
+            
+            <div id="searchOut">
+                <h4 class="searchHead">POPULAR PRODUCTS</h4>
+                <div id="sonuclar">
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+   </div>
+     
    </div>
    <div class="bigText">
       <div class="bigText2">Your Source <br>
-for <span class="mavitxt">Undetected Cheats.</span> </div>
+   for <span class="mavitxt">Undetected Cheats.</span> </div>
    </div>
       <div class="content"><%- include(content) %></div>
    <div id="bttm" class="box Categories bottom">
@@ -147,6 +172,32 @@ for <span class="mavitxt">Undetected Cheats.</span> </div>
                <li class="lis"> <span></span><i class="fa-solid fa-litecoin-sign ltc" ></i>Litecoin</li>
              </div>
          </div>
+   </div>
+   <div class="cart-overlay" id="cartOverlay"></div>
+   <div class="cart-drawer" id="cartDrawer">
+      <div class="cart-header">
+         <h2 id="cartTitle">Shopping Cart <span id="cartCountHeader">(0 Items)</span></h2>
+         <i class="fa-solid fa-xmark" id="closeCartBtn"></i>
+      </div>
+      <div class="cart-body" id="cartBody">
+         <div class="cart-empty" id="cartEmpty">
+            <div class="cart-empty-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+            <h3>Your cart is empty</h3>
+            <p>Add some items to get started!</p>
+            <button id="continueShoppingBtn"><i class="fa-solid fa-store"></i> Continue Shopping</button>
+         </div>
+         <div class="cart-items" id="cartItemsContainer" style="display: none;"></div>
+      </div>
+      <div class="cart-footer" id="cartFooter" style="display: none;">
+         <div class="cart-total">
+            <span>Total</span>
+            <span id="cartTotalPrice">$0.00</span>
+         </div>
+         <div class="cart-actions">
+            <button class="checkout-btn"><i class="fa-solid fa-credit-card"></i> Checkout</button>
+            <button class="clear-btn" id="clearCartBtn">Clear</button>
+         </div>
+      </div>
    </div>
 </body>
 <script src="/js/main.js"></script>
