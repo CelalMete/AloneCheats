@@ -19,11 +19,30 @@ const user = require('./public/models/usermodel');
 const Order = require('./public/models/ordermodel');
 const dbURL = process.env.MONGO_URI;
  const axios = require('axios');
+ const { Resend } = require('resend');
+
+const resend = new Resend(process.env.RESEND);
+async function sendEmail(toEmail, Code) {
+  try{
+     console.log('asa')
+    console.log(toEmail+'a')
+  const veri = await resend.emails.send({
+  from: 'admin@frontiera.store',
+  to: toEmail,
+  subject: `${verificationCode}`,
+  html: '<p>Congrats on sending your <strong>first email</strong>!</p>'
+});
+console.log("RESEND CEVABI:", veri);
+  } catch (err) {
+    console.error("E-posta hatası:", err); 
+    throw err;
+}}
 console.log("-------------------------------------------------");
 console.log("🌍 SRV BAĞLANTISI DENENİYOR...");
 mongoose.connect(dbURL)
   .then(() => console.log("Bağlantı Başarılı"))
   .catch(err => console.error(err));
+
 //no need for database i think and i hope ( nope....)
 //code start point
 const validateTxid = (req, res, next) => {
@@ -154,39 +173,87 @@ app.get('/cheats/:id',async(req,res)=>{
    })
 })
 app.get('/checkout', async (req, res) => {
+    try {
+        if (!req.query.cart) return res.status(400).send("Sepet boş veya geçersiz yönlendirme!");
+        
+        const cartArray = JSON.parse(req.query.cart); // Frontend'den gelen [{id, title, qty}] dizisi
+        const wallets = {
+            ltc: process.env.LTC_WALLET_ADDRESS,
+            usdt: process.env.USDT_WALLET_ADDRESS,
+            btc: process.env.BTC_WALLET_ADDRESS,
+            xmr: process.env.XMR_WALLET_ADDRESS
+        };
+        
+        let totalPrice = 0;
+        let verifiedItems = []; // EJS sayfasına göndereceğimiz güvenli ürün listesi
 
-    const product = await cheat.findById(req.query.cheatId);
-    const wallets = {
-        ltc: process.env.LTC_WALLET_ADDRESS,
-        usdt:process.env.USDT_WALLET_ADDRESS,
-        btc:  process.env.BTC_WALLET_ADDRESS,
-        xmr: process.env.XMR_WALLET_ADDRESS
-    };
-    
-    const selectedPackage = product.Price.find(p => p.PriceTitle === req.query.title);
-    const price = selectedPackage ? selectedPackage.Price : 0;
-    if (!product) return res.status(404).send("Hile bulunamadı!");
-    res.render('main', {
-        content: 'order', 
-        style: 'payment.css',
-        title: req.query.title,price: price,
-        cheatName: req.query.cheatName,
-        qty: req.query.qty,wallets: wallets ,
-        cheatId:product._id
-    });
+        // Sepetteki her bir ürünü DB'den bul ve fiyatını hesapla
+        for (let item of cartArray) {
+            const product = await cheat.findById(item.id);
+            if (!product) continue;
+            
+            const selectedPackage = product.Price.find(p => p.PriceTitle === item.title);
+            if (selectedPackage) {
+                const itemTotal = selectedPackage.Price * item.qty;
+                totalPrice += itemTotal;
+                
+                verifiedItems.push({
+                    cheatId: product._id,
+                    cheatName: product.CheatName,
+                    packageTitle: selectedPackage.PriceTitle,
+                    price: selectedPackage.Price,
+                    qty: item.qty,
+                    itemTotal: itemTotal
+                });
+            }
+        }
+
+        if (verifiedItems.length === 0) return res.status(404).send("Geçerli hile bulunamadı!");
+
+        res.render('main', {
+            content: 'order', 
+            style: 'payment.css',
+            items: verifiedItems, // Artık EJS'ye tek ürün değil, Ürünler Dizisi yolluyoruz
+            totalPrice: totalPrice, // Sepetin Toplam Tutarı
+            wallets: wallets,
+            cartDataRaw: req.query.cart // Bunu formu postlarken kullanacağız
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Ödeme sayfası yüklenirken bir hata oluştu.");
+    }
 });
 app.post('/submit-payment', validateTxid, async (req, res) => {
     try {
-        const { cheatId, packageTitle, txid, method, email } = req.body; 
-        
-        const product = await cheat.findById(cheatId);
-        if (!product) return res.status(400).send("Geçersiz ürün!");
-        
-        const selectedPackage = product.Price.find(p => p.PriceTitle === packageTitle);
-        if (!selectedPackage) return res.status(400).send("Geçersiz paket seçimi!");
+        // Formdan gizli input ile cartDataRaw'ı (JSON) çekiyoruz
+        const { cartDataRaw, txid, method, email } = req.body; 
+        if (!cartDataRaw) return res.status(400).send("Sepet verisi bulunamadı!");
 
-        const dbPriceUSD = selectedPackage.Price;
+        const cartArray = JSON.parse(cartDataRaw);
         
+        let totalDbPriceUSD = 0;
+        let orderItems = [];
+
+        // Güvenlik: Toplam fiyatı yine DB'den hesaplıyoruz!
+        for (let item of cartArray) {
+            const product = await cheat.findById(item.id);
+            if (!product) continue;
+            const selectedPackage = product.Price.find(p => p.PriceTitle === item.title);
+            if (selectedPackage) {
+                totalDbPriceUSD += (selectedPackage.Price * item.qty);
+                orderItems.push({
+                    cheatId: product._id,
+                    cheatName: product.CheatName,
+                    packageTitle: selectedPackage.PriceTitle,
+                    qty: item.qty,
+                    pricePaid: selectedPackage.Price
+                });
+            }
+        }
+
+        if (orderItems.length === 0) return res.status(400).send("Geçersiz paket/ürün seçimi!");
+
         const coinGeckoMap = { ltc: 'litecoin', btc: 'bitcoin', xmr: 'monero', usdt: 'tether' };
         const cryptoId = coinGeckoMap[method];
         if (!cryptoId) return res.status(400).send("Desteklenmeyen ödeme yöntemi.");
@@ -194,10 +261,10 @@ app.post('/submit-payment', validateTxid, async (req, res) => {
         const { data } = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoId}&vs_currencies=usd`);
         const currentCryptoPrice = data[cryptoId].usd; 
         
-        const expectedCryptoAmount = dbPriceUSD / currentCryptoPrice;
+        // ÖDENMESİ GEREKEN TOPLAM KRİPTO MİKTARI
+        const expectedCryptoAmount = totalDbPriceUSD / currentCryptoPrice;
         
         const result = await verifyPayment(txid, method, expectedCryptoAmount);
-        
         if (!result.success) {
             return res.status(400).send(`Ödeme doğrulanamadı: ${result.message}`);
         }
@@ -205,15 +272,21 @@ app.post('/submit-payment', validateTxid, async (req, res) => {
         const existingOrder = await Order.findOne({ txid });
         if (existingOrder) return res.status(400).send("Bu TXID zaten kullanılmış!");
         
+        // SİPARİŞİ VERİTABANINA KAYDET
         await Order.create({
             email, 
-            cheatId, 
+            items: orderItems, // !!! DİKKAT: Eski kodda tek cheatId vardı, artık ürünler dizisi var
+            totalPriceUSD: totalDbPriceUSD,
             txid,
             method,
             status: 'completed'
         });
         
-        res.send(`Ödemen alındı! Hile bilgileri ${email} adresine gönderilecek.`);
+        // Müşteri satın alımı tamamladığında Frontend'deki sepeti temizlemesi için uyarı
+        res.send(`
+            <script>localStorage.removeItem('alone_cart');</script>
+            Ödemen alındı! Toplam ${orderItems.length} kalem ürün bilgileri ${email} adresine gönderilecek.
+        `);
     } catch (error) {
         console.error(error);
         res.status(500).send("Bir hata oluştu.");

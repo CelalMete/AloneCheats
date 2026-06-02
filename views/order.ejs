@@ -1,10 +1,19 @@
 <div class="checkout-container" id="checkoutData" data-wallets="<%= JSON.stringify(wallets) %>">
     <h2>Ödemeyi Tamamla</h2>
-    <p>Ürün: <%= cheatName %></p>
-    <p>Id: <%= cheatId %></p>
-    <p>Paket: <%= title %></p>
-    <p>Adet: <%= qty %></p>
-    <p>Ödenecek Tutar: <strong>$<%= price %></strong></p>
+    
+    <!-- Sepetteki Ürünleri Listeleme Alanı -->
+    <div class="order-items-list" style="margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">
+        <% items.forEach(function(item) { %>
+            <div class="order-item" style="margin-bottom: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px;">
+                <p style="margin: 0; color: #fff;"><strong>Ürün:</strong> <%= item.cheatName %></p>
+                <p style="margin: 5px 0 0 0; font-size: 14px; color: #ccc;">
+                    Paket: <%= item.packageTitle %> | Adet: <%= item.qty %>
+                </p>
+            </div>
+        <% }); %>
+    </div>
+
+    <p style="font-size: 18px;">Toplam Ödenecek Tutar: <strong>$<%= totalPrice.toFixed(2) %></strong></p>
     
     <div class="paymentblock" style="background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
         <span style="display: block; font-size: 12px; color: #ccc; margin-bottom: 5px;">Ödeme Yapılacak <span id="cryptoName">LTC</span> Adresi:</span>
@@ -12,8 +21,9 @@
     </div>
 
     <form class="form" action="/submit-payment" method="POST">
-        <input type="hidden" name="cheatId" value="<%= cheatId %>">
-        <input type="hidden" name="packageTitle" value="<%= title %>">
+        <!-- YENİ SİSTEM: Tüm sepet verisini backend'e gönderen gizli input -->
+        <input type="hidden" name="cartDataRaw" value="<%= cartDataRaw %>">
+
         <div class="paymentblock">
             <i class="fa-regular fa-envelope" style="color: rgb(255, 255, 255);"></i>
             <input type="email" name="email" placeholder="E-posta adresin (teslimat için)" required>

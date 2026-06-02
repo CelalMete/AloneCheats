@@ -166,3 +166,19 @@ if(clearCartBtn) {
 }
 
 renderCart();
+
+const checkoutBtn = document.querySelector('.checkout-btn');
+if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', () => {
+        if (cartItems.length === 0) return alert("Your cart is empty!");
+        
+        const itemsToCheckout = cartItems.map(item => ({
+            id: item.id,
+            title: item.variant,
+            qty: item.qty
+        }));
+
+        const cartData = encodeURIComponent(JSON.stringify(itemsToCheckout));
+        window.location.href = `/checkout?cart=${cartData}`; 
+    });
+}

@@ -72,10 +72,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
      buyBtn.addEventListener('click', (e) => {
-    const cheatCard = e.target.closest('.cheat-card');
-   const cheatId = cheatCard.getAttribute('data-cheat-id');
-    const price = currentVariant.getAttribute('data-price');
-    const title = currentVariant.querySelector('.title').innerText;
-    window.location.href = `/checkout?cheatId=${cheatId}&title=${encodeURIComponent(title)}`;
+    if (!selectedVariant) return alert("Please select a variant!");
+    const qty = parseInt(numbInput.value) || 1;
+    
+    // Sadece 1 üründen oluşan geçici bir sepet oluşturuyoruz
+    const singleItemCart = [{
+        id: cheatId,
+        title: selectedVariant,
+        qty: qty
+    }];
+
+    // Diziyi JSON string'e çevirip güvenli bir şekilde URL'ye ekliyoruz
+    const cartData = encodeURIComponent(JSON.stringify(singleItemCart));
+    window.location.href = `/checkout?cart=${cartData}`;
 });
 });
