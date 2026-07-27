@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const buyBtn = document.getElementById('buy');
     const cheatId = document.getElementById('buy').getAttribute('data-cheat-id');
     const cheatName = document.querySelector('h1').innerText;
+    const thumbs = document.querySelectorAll('.thumb');
+
     let selectedVariant = null;
     let basePrice = 0;
     let maxStock = 0;
@@ -16,7 +18,18 @@ document.addEventListener('DOMContentLoaded', () => {
             box.classList.add('out-of-stock');
         }
     });
-
+ thumbs.forEach(thumb => {
+        thumb.addEventListener('click', (e) => {
+            const newSrc = e.target.src;
+            const mainFrame = document.getElementById('main-frame');
+            const fgImg = document.getElementById('fg-img');
+            
+            fgImg.style.backgroundImage = `url('${newSrc}')`;
+            
+            thumbs.forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+        });
+    });
     function updateTotal() {
         let qty = parseInt(numbInput.value) || 1;
         if (qty < 1) qty = 1;
@@ -75,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!selectedVariant) return alert("Please select a variant!");
     const qty = parseInt(numbInput.value) || 1;
     
-    // Sadece 1 üründen oluşan geçici bir sepet oluşturuyoruz
     const singleItemCart = [{
         id: cheatId,
         title: selectedVariant,

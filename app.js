@@ -26,13 +26,13 @@ async function sendEmail(toEmail, Code) {
   try{
      console.log('asa')
     console.log(toEmail+'a')
-  const veri = await resend.emails.send({
-  from: 'admin@frontiera.store',
-  to: toEmail,
+    const veri = await resend.emails.send({
+      from: 'admin@frontiera.store', 
+      to: toEmail,
   subject: `${verificationCode}`,
   html: '<p>Congrats on sending your <strong>first email</strong>!</p>'
-});
-console.log("RESEND CEVABI:", veri);
+    });
+    console.log("RESEND CEVABI:", veri);
   } catch (err) {
     console.error("E-posta hatası:", err); 
     throw err;
@@ -337,7 +337,6 @@ app.post('/cheats/add-price/:id', async (req, res) => {
     res.redirect(`/cheats/${req.params.id}`);
 });
 
-// 2. Info Bloğu Ekleme
 app.post('/cheats/add-info/:id', async (req, res) => {
     const { blockTitle,subTitle, items, } = req.body;
     const itemsArray = items.split(',').map(item => item.trim());
@@ -346,6 +345,44 @@ app.post('/cheats/add-info/:id', async (req, res) => {
         $push: { infoBlocks: { blockTitle,subTitle, items: itemsArray } }
     });
     res.redirect(`/cheats/${req.params.id}`);
+});
+app.post('/cheats/add-stock/:id', async (req, res) => {
+try {
+        const { priceId, add } = req.body;
+        const stockToAdd = parseInt(add, 10) || 0;
+        const cheatItem = await cheat.findById(req.params.id);
+        if (!cheatItem) {
+            return res.status(404).send("Ürün bulunamadı.");
+        }
+        const priceItem = cheatItem.Price.id(priceId); 
+        if (priceItem) {
+            priceItem.Stock = (priceItem.Stock || 0) + stockToAdd;
+            await cheatItem.save();
+        }
+        res.redirect(`/cheats/${req.params.id}`);
+    } catch (error) {
+        console.error("Stok artırılırken hata oluştu:", error);
+        res.status(500).send("Stok güncellenemedi.");
+    }
+});
+app.post('/cheats/change-price/:id', async (req, res) => {
+try {
+        const { priceId, nprice } = req.body;
+        const newprice = parseInt(nprice, 10) || 0;
+        const cheatItem = await cheat.findById(req.params.id);
+        if (!cheatItem) {
+            return res.status(404).send("Ürün bulunamadı.");
+        }
+        const priceItem = cheatItem.Price.id(priceId); 
+        if (priceItem) {
+            priceItem.Price = newprice
+            await cheatItem.save();
+        }
+        res.redirect(`/cheats/${req.params.id}`);
+    } catch (error) {
+        console.error("Stok artırılırken hata oluştu:", error);
+        res.status(500).send("Stok güncellenemedi.");
+    }
 });
 app.get('/search', async (req, res) => {
     const query = req.query.q; 

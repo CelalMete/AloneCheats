@@ -85,4 +85,24 @@
     <textarea name="items" placeholder="Maddeleri virgülle ayırarak yaz"></textarea>
     <button type="submit">Info Bloğu Ekle</button>
 </form>
+<form action="/cheats/add-stock/<%= cheat._id %>" method="POST">
+    <label>Kategori Seç:</label>
+    <select name="priceId" required>
+        <% cheat.Price.forEach(pr => { %>
+            <option  value="<%= pr._id %>"><%= pr.PriceTitle %></option>
+        <% }) %>
+    </select>
+    <input type="text" name="add" placeholder="kaç yeni var" required>
+    <button type="submit">stok ekle</button>
+</form>
+<form action="/cheats/change-price/<%= cheat._id %>" method="POST">
+    <label>Kategori Seç:</label>
+    <select name="priceId" required>
+        <% cheat.Price.forEach(pr => { %>
+            <option  value="<%= pr._id %>"><%= pr.PriceTitle %></option>
+        <% }) %>
+    </select>
+    <input type="text" name="nprice" placeholder= "yeni price" required>
+    <button type="submit">price ekle</button>
+</form>
 <script src="/js/cheat.js"></script>

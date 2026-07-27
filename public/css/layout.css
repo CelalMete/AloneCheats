@@ -31,9 +31,10 @@
 .mavitxt{color:rgb(44 159 235);}
 .header_nav2{display: flex;flex-direction: column;line-height: 1.25rem;padding: 1rem clamp(8px, 2vw, 24px);gap: 8px;justify-content: space-between;align-items: center;text-align: center;font-size: .875rem;box-sizing: border-box;font-weight: 500;}
 .navLeft .active{ border-bottom: 1px solid rgb(44 159 235);}
+.navLeft a{text-decoration: none;}
 .icon{color:rgba(250, 250, 250, 0.512) ;}
 .blue {color: rgb(44 159 235) !important;}
-.text-sm{color: rgba(232, 232, 232, 1)}
+.text-sm{color: rgba(232, 232, 232, 1)} 
 .mobile-search-trigger {display: none;cursor: pointer;}
 .search-wrapper {position: relative;}
 .search-backdrop {display: none;}
