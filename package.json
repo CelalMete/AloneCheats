@@ -18,10 +18,13 @@
     "dotenv": "^17.4.2",
     "ejs": "^5.0.2",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
     "mongoose": "^9.6.2",
     "multer": "^2.1.1",
     "multer-storage-cloudinary": "^4.0.0",
     "node-cron": "^4.2.1",
+    "passport": "^0.7.0",
+    "passport-steam": "^1.0.18",
     "path": "^0.12.7",
     "resend": "^6.12.4",
     "swiper": "^12.1.4"

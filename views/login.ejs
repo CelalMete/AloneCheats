@@ -1,0 +1,41 @@
+<div class="checkout-container" id="checkoutData" data-wallets=" JSON.stringify(wallets) ">
+    <h2>Ödemeyi Tamamla</h2>
+    <div class="order-items-list" style="margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">
+            <div class="order-item" style="margin-bottom: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px;">
+                <p style="margin: 0; color: #fff;"><strong>Ürün:</strong> item.cheatName </p>
+            </div>
+    </div>    
+    <form class="form" id="authForm" >
+          <div class="select-wrapper">
+            <select name="method" id="type">
+                <option value="login">Login</option>
+                <option value="register">Register</option>
+            </select>
+            <i class="fa-solid fa-chevron-down select-arrow"></i>
+        </div>
+        <input type="hidden" name="cartDataRaw" value=" cartDataRaw ">
+
+        <div class="paymentblock"id="email">
+            <i class="fa-regular fa-envelope" style="color: rgb(255, 255, 255);"></i>
+            <input type="email" id="em" name="email" placeholder="E-posta adresin (teslimat için)" required>
+        </div>
+         <div class="paymentblock"id="nick">
+            <i class="fa-solid fa-hashtag" style="color: rgb(255, 255, 255);"></i>
+            <input type="text" id="ni" name="Nickname" placeholder="Your Nickname" required>
+        </div>
+         <div class="paymentblock"id="pass1">
+            <i class="fa-solid fa-hashtag" style="color: rgb(255, 255, 255);"></i>
+            <input type="text" id="p1" name="Password" placeholder="Password" required>
+        </div>
+         <div class="paymentblock" id="pass2">
+            <i class="fa-solid fa-hashtag" style="color: rgb(255, 255, 255);"></i>
+            <input type="text" id="p2" name="Password2" placeholder="Password again" required>
+        </div>
+     
+    
+        
+        <button type="submit" id="submitBtn">Giriş yap</button>
+    </form>
+</div> 
+
+<script src="/js/login.js"></script>

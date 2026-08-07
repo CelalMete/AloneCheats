@@ -5,7 +5,19 @@ const openSearchBtn = document.getElementById('openSearchBtn');
 const searchWrapper = document.getElementById('searchWrapper');
 const closeSearchBtn = document.getElementById('closeSearchBtn');
 const searchBackdrop = document.getElementById('searchBackdrop');
-
+const suAnkiYol = window.location.pathname;
+    const menuLinkleri = document.querySelectorAll('.navLeft a');
+    document.querySelectorAll('.header_nav2').forEach(div => {
+        div.classList.remove('active');
+    });
+    menuLinkleri.forEach(link => {
+        if (link.getAttribute('href') === suAnkiYol) {
+            const icindekiDiv = link.querySelector('.header_nav2');
+            if (icindekiDiv) {
+                icindekiDiv.classList.add('active');
+            }
+        }
+    });
 input.addEventListener('input', async function() {
     const q = input.value;
     if (q.length < 1) {

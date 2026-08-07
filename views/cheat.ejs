@@ -92,7 +92,7 @@
             <option  value="<%= pr._id %>"><%= pr.PriceTitle %></option>
         <% }) %>
     </select>
-    <input type="text" name="add" placeholder="kaç yeni var" required>
+    <textarea name="keysText " id="keysText" rows="5"></textarea>
     <button type="submit">stok ekle</button>
 </form>
 <form action="/cheats/change-price/<%= cheat._id %>" method="POST">

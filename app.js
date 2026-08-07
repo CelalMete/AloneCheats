@@ -1,31 +1,36 @@
 const express = require('express');
 const multer = require('multer');
 const mongoose = require('mongoose');
-require('dotenv').config();//no need for multer for now 
-const path = require('path');//same
-const fs = require('fs');//probably same
+const session = require('express-session');
+require('dotenv').config();
+const path = require('path');
+const fs = require('fs');
 const app = express();
 const config = require('./config')
-
-app.use(express.static(path.join(__dirname, 'public')));//important
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 gün
+}));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.set('view engine', 'ejs');
-app.set('public', path.join(__dirname, 'public'));//important2
+app.set('public', path.join(__dirname, 'public'));
 app.use(express.urlencoded({ extended: true }));
 const { KategoriUpload,CheatUpload} = require('./cloudinary')
 const category = require('./public/models/category')
+const Kullanici = require('./public/models/usermodel')
 const cheat = require('./public/models/cheatmodel');
-const user = require('./public/models/usermodel');
+const Key = require('./public/models/keymodel');
 const Order = require('./public/models/ordermodel');
 const dbURL = process.env.MONGO_URI;
  const axios = require('axios');
  const { Resend } = require('resend');
 
 const resend = new Resend(process.env.RESEND);
-async function sendEmail(toEmail, Code) {
+async function sendEmail(toEmail, verificationCode) {
   try{
-     console.log('asa')
-    console.log(toEmail+'a')
     const veri = await resend.emails.send({
       from: 'admin@frontiera.store', 
       to: toEmail,
@@ -43,8 +48,6 @@ mongoose.connect(dbURL)
   .then(() => console.log("Bağlantı Başarılı"))
   .catch(err => console.error(err));
 
-//no need for database i think and i hope ( nope....)
-//code start point
 const validateTxid = (req, res, next) => {
     const { txid } = req.body;
     const txidRegex = /^[a-fA-F0-9]{64}$/; 
@@ -63,17 +66,14 @@ async function verifyPayment(txid, method, expectedAmount) {
             const response = await axios.get(`https://apilist.tronscanapi.com/api/transaction-info?hash=${txid}`);
             const tx = response.data;
 
-            // İşlem Tron ağında yoksa
             if (Object.keys(tx).length === 0 || !tx.hash) {
                  return { success: false, message: "Böyle bir işlem (TXID) bulunamadı." };
             }
 
-            // Onay ve Başarı kontrolü (Tron ağı 'SUCCESS' döner)
             if (tx.contractRet !== "SUCCESS" || !tx.confirmed) {
                 return { success: false, message: "İşlem henüz onay almadı veya başarısız. Lütfen bekleyip tekrar deneyin." };
             }
 
-            // İşlem içindeki token transferlerini bul
             if (!tx.trc20TransferInfo) {
                  return { success: false, message: "Bu işlemde USDT transferi bulunamadı." };
             }
@@ -133,6 +133,135 @@ async function verifyPayment(txid, method, expectedAmount) {
     }
 }
 
+const authMiddleware = (req, res, next) => {
+  if (!req.session || !req.session.user) {
+      return res.redirect('/login');
+  }
+  next();
+};
+
+function isAdmin1(req, res, next) {
+  if (!req.session.user || !req.session.user.rutbe) {
+    return res.status(401).json({ message: "Giriş yapmanız gerekiyor." });
+  }
+
+  if (req.session.user.rutbe !== "admin") {
+    return res.status(403).json({ message: `Bu sayfaya erişim yetkiniz yok.` });
+  }
+
+  next(); 
+}
+
+function isAdmin2(req, res, next) {
+  if (!req.session.user || !req.session.user.rutbe) {
+    return res.status(401).json({ message: "Giriş yapmanız gerekiyor." });
+  }
+  
+  // Düzeltilen Kısım: Admin veya Seller rütbelerinden biri varsa izin ver
+  const allowedRoles = ["admin", "seller"];
+  if (!allowedRoles.includes(req.session.user.rutbe)) {
+    return res.status(403).json({ message: "Bu sayfaya erişim yetkiniz yok." });
+  }
+  
+  next(); 
+}
+app.get('/login', (req, res) => {
+    res.render('main', {
+        content: 'login',
+        style: 'payment.css'
+    });
+});
+
+app.post('/auth', async (req, res) => {
+  const {nickname,password,selectedValue} = req.body;
+  if(selectedValue=='login'){
+  try {
+    let userFound = await Kullanici.findOne({ nick:nickname, password});
+    if (userFound) {
+      req.session.user = userFound;
+      req.session.userId = userFound._id;
+      console.log("Oturum Başarıyla Kaydedildi! Kullanıcı:", req.session.user.nick);
+      return res.json({ success: true, userId: userFound._id });
+    } else {
+      return res.json({ success: false, message: 'Kayıtlı değilsin veya bilgiler hatalı.' });
+    }
+  } catch (error) {
+    console.error('Kayıt / Giriş hatası:', error);
+    return res.json({ success: false, message: 'Sunucu hatası' });
+  }
+}else if(selectedValue=='register'){
+    try {const {email,password2} = req.body;
+    console.log(nickname+password+email)
+    let userFound = await Kullanici.findOne({ nick:nickname, password});
+    if (userFound) {
+      return res.json({ success: false, message: 'Bu kullanıcı adı veya e-posta adresi zaten kullanımda!' })
+    } else {
+     let verificationCode = Math.floor(100000 + Math.random() * 900000);
+      req.session.pendingUser = {
+                nickname,
+                email,
+                password,
+                code: verificationCode
+        };
+        await sendEmail(email, verificationCode);
+        return res.json({ 
+                success: true, 
+                redirect: '/verify-code' 
+        });
+    }
+  } catch (error) {
+    console.error('Register hatası:', error);
+    return res.json({ success: false, message: 'Sunucu hatası' });
+  }
+}
+
+});
+
+app.get('/verify-code', (req, res) => {
+    if (!req.session.pendingUser) {
+        return res.redirect('/login');
+    }
+  res.render('main', {
+            content: 'email', 
+            style: 'payment.css'
+        });
+});
+app.post('/verify-code', async (req, res) => {
+    const { code } = req.body;
+    const pending = req.session.pendingUser;
+
+    if (!pending) {
+        return res.json({ success: false, message: 'Oturum süreniz dolmuş. Lütfen tekrar kayıt olun.' });
+    }
+
+    if (pending.code == code) {
+        try {
+            const newUser = new Kullanici({
+                nick: pending.nickname,
+                email: pending.email,
+                password: pending.password,
+                kayitTarihi: new Date()
+            });
+            await newUser.save();
+            req.session.user = newUser;
+            req.session.userId = newUser._id;
+            delete req.session.pendingUser;
+
+           return res.redirect('/');
+        } catch (error) {
+            console.error("Veritabanı Kayıt Hatası:", error);
+            return res.status(500).json({ success: false, message: 'Kullanıcı kaydedilemedi.' });
+        }
+    } else {
+        return res.json({ success: false, message: 'Girdiğiniz doğrulama kodu hatalı!' });
+    }
+});
+function formatAd(metin) {
+    if (!metin) return metin;
+    return metin.split(' ')
+                .map(kelime => kelime.charAt(0).toUpperCase() + kelime.slice(1).toLowerCase())
+                .join(' ');
+}
 app.get('/',async(req,res)=>{
   const games =await category.find()
    res.render('main',{
@@ -141,7 +270,8 @@ app.get('/',async(req,res)=>{
       style:'store.css'
    })
 })
-app.get('/uploadcheat2', async (req, res) => {
+
+app.get('/uploadcheat2',isAdmin1, async (req, res) => {
     const games = await category.find(); // Kategori listesini çek
     res.render('main', {
         games, // Formdaki select için gerekli
@@ -149,7 +279,7 @@ app.get('/uploadcheat2', async (req, res) => {
         style: 'store.css'
     });
 });
-app.get('/uploadcheat',async(req,res)=>{
+app.get('/uploadcheat',isAdmin1,async(req,res)=>{
    res.render('main',{
       content:'upload',
       style:'store.css'
@@ -164,6 +294,7 @@ app.get('/category/:id',async(req,res)=>{
       style:'store.css'
    })
 })
+
 app.get('/cheats/:id',async(req,res)=>{
    const cheatinfo= await cheat.findById(req.params.id)
    res.render('main',{
@@ -292,28 +423,26 @@ app.post('/submit-payment', validateTxid, async (req, res) => {
         res.status(500).send("Bir hata oluştu.");
     }
 });
-app.post('/add-cheat2', CheatUpload, async (req, res) => {
+app.post('/add-cheat2',isAdmin1, CheatUpload, async (req, res) => {
     try {
         // 1. Ana resim var mı?
         const coverUrl = req.files['coverImage'] ? req.files['coverImage'][0].path : null;
         const galleryUrls = req.files['otherImages'] 
             ? req.files['otherImages'].map(f => f.path) 
             : [];
-
         const newCheat = new cheat({
             CheatName:req.body.name,
             Photo: coverUrl,      
             Photos: galleryUrls,  
           categoryId: req.body.categoryId
         });
-
         await newCheat.save();
         res.redirect('/');
     } catch (err) {
         res.status(500).send("Hata: " + err.message);
     }
 });
-app.post('/add-cheat', KategoriUpload, async (req, res) => {
+app.post('/add-cheat',isAdmin1, KategoriUpload, async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).send("Resim yüklenmedi!");
@@ -329,7 +458,7 @@ app.post('/add-cheat', KategoriUpload, async (req, res) => {
         res.status(500).send("Yükleme hatası: " + err.message);
     }
 });
-app.post('/cheats/add-price/:id', async (req, res) => {
+app.post('/cheats/add-price/:id',isAdmin1, async (req, res) => {
     const { PriceTitle, Stock, Price } = req.body;
     await cheat.findByIdAndUpdate(req.params.id, {
         $push: { Price: { PriceTitle, Stock, Price } }
@@ -337,7 +466,7 @@ app.post('/cheats/add-price/:id', async (req, res) => {
     res.redirect(`/cheats/${req.params.id}`);
 });
 
-app.post('/cheats/add-info/:id', async (req, res) => {
+app.post('/cheats/add-info/:id',isAdmin1, async (req, res) => {
     const { blockTitle,subTitle, items, } = req.body;
     const itemsArray = items.split(',').map(item => item.trim());
     
@@ -346,26 +475,47 @@ app.post('/cheats/add-info/:id', async (req, res) => {
     });
     res.redirect(`/cheats/${req.params.id}`);
 });
-app.post('/cheats/add-stock/:id', async (req, res) => {
+app.post('/cheats/add-stock/:id',isAdmin1, async (req, res) => {
 try {
-        const { priceId, add } = req.body;
-        const stockToAdd = parseInt(add, 10) || 0;
-        const cheatItem = await cheat.findById(req.params.id);
-        if (!cheatItem) {
-            return res.status(404).send("Ürün bulunamadı.");
+     const cheatId=req.params.id
+        const { priceId, keysText } = req.body;
+        const keyArray = keysText
+            .split(/[\n,]+/) 
+            .map(k => k.trim())
+            .filter(k => k.length > 0);
+
+        if (keyArray.length === 0) {
+            return res.status(400).send("Hiç geçerli key bulunamadı.");
         }
-        const priceItem = cheatItem.Price.id(priceId); 
-        if (priceItem) {
-            priceItem.Stock = (priceItem.Stock || 0) + stockToAdd;
-            await cheatItem.save();
+
+        const keysToInsert = keyArray.map(code => ({
+            cheatId: cheatId,
+            priceId: priceId,
+            keyCode: code,
+            isUsed: false
+        }));
+        const insertedKeys = await Key.insertMany(keysToInsert, { ordered: false });
+
+        const cheatItem = await cheat.findById(cheatId);
+        if (cheatItem) {
+            const priceItem = cheatItem.Price.id(priceId);
+            if (priceItem) {
+                priceItem.Stock = (priceItem.Stock || 0) + insertedKeys.length;
+                await cheatItem.save();
+            }
         }
-        res.redirect(`/cheats/${req.params.id}`);
+        res.send(`${insertedKeys.length} adet Key başarıyla eklendi ve stok güncellendi!`);
+
     } catch (error) {
-        console.error("Stok artırılırken hata oluştu:", error);
-        res.status(500).send("Stok güncellenemedi.");
+        if (error.code === 11000) {
+            res.send("Keyler eklendi ancak metin kutusunda zaten veritabanında olan bazı keyler atlandı.");
+        } else {
+            console.error("Key ekleme hatası:", error);
+            res.status(500).send("Sunucu hatası oluştu.");
+        }
     }
 });
-app.post('/cheats/change-price/:id', async (req, res) => {
+app.post('/cheats/change-price/:id',isAdmin1, async (req, res) => {
 try {
         const { priceId, nprice } = req.body;
         const newprice = parseInt(nprice, 10) || 0;

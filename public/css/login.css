@@ -1,0 +1,50 @@
+.auth-tabs {
+        display: flex;
+        background-color: rgb(24 25 30);
+        border-radius: 0.75rem;
+        padding: 4px;
+        margin-bottom: 1.5rem;
+        gap: 4px;
+    }
+
+    .tab-btn {
+        flex: 1;
+        padding: 0.75rem;
+        background: transparent;
+        border: none;
+        color: #9ca3af;
+        font-weight: 600;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* Aktif (Tıklanan) Sekme Stil - Koyulaşma ve Vurgu */
+    .tab-btn.active {
+        background-color: rgb(15, 16, 20);
+        color: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Hata / Başarı Bildirim Kutusu */
+    .auth-alert {
+        padding: 0.8rem 1rem;
+        border-radius: 0.75rem;
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .auth-alert.error {
+        background-color: rgba(239, 68, 68, 0.2);
+        border: 1px solid #ef4444;
+        color: #fca5a5;
+    }
+
+    .auth-alert.success {
+        background-color: rgba(34, 197, 94, 0.2);
+        border: 1px solid #22c55e;
+        color: #86efac;
+    }
